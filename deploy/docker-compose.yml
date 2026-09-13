@@ -1,0 +1,16 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop
+    restart: unless-stopped
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - juice-shop

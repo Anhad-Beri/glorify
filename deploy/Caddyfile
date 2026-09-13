@@ -1,0 +1,6 @@
+:8080 {
+	handle /.well-known/steel-pentest-verify.txt {
+		respond "steel-verify-8a602f7bdff81cb8acd9c145042034b9" 200
+	}
+	reverse_proxy juice-shop:3000
+}

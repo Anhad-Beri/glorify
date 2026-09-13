@@ -698,8 +698,57 @@ async function refreshReports() {
   } catch {  }
 }
 
+function renderVerifiedList(verified) {
+  const el = document.querySelector("#verified-list");
+  if (!el) return;
+  el.textContent = verified && verified.length ? `Verified sites: ${verified.join(", ")}` : "No sites verified yet.";
+}
+
+async function loadToken() {
+  try {
+    const t = await api("/api/token");
+    document.querySelector("#verify-token").textContent =
+      `${t.token}\nhost at: <site>${t.well_known_path}`;
+    renderVerifiedList(t.verified);
+  } catch {
+    document.querySelector("#verify-token").textContent = "(could not load token)";
+  }
+}
+
+const verifyForm = document.querySelector("#verify-form");
+if (verifyForm) {
+  verifyForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const target = document.querySelector("#verify-target").value.trim();
+    const result = document.querySelector("#verify-result");
+    const btn = document.querySelector("#verify-btn");
+    if (!target) return;
+    btn.disabled = true;
+    result.textContent = "Checking…";
+    try {
+      const started = await api("/api/verify/start", { method: "POST", body: JSON.stringify({ target }) });
+      if (started.exempt) {
+        result.textContent = started.message;
+        btn.disabled = false;
+        return;
+      }
+      const checked = await api("/api/verify/check", { method: "POST", body: JSON.stringify({ target }) });
+      result.textContent = checked.detail;
+      if (checked.verified) {
+        document.querySelector("#target-url").value = target;
+        await loadToken();
+      }
+    } catch (error) {
+      result.textContent = error.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
 async function initialize() {
   resetScanView();
+  loadToken();
   try {
     const dashboard = await api("/api/dashboard");
     state.runs = dashboard.runs;

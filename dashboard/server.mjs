@@ -208,6 +208,23 @@ export function createDashboardServer({
         return sendJson(response, h.ok ? 200 : 502, h.ok ? h.data : { backend: false, computer: false });
       }
 
+      if (request.method === "GET" && url.pathname === "/api/token") {
+        const t = await backendJson("/api/token");
+        return sendJson(response, t.ok ? 200 : 502, t.data);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/verify/start") {
+        const input = await readJson(request);
+        const v = await backendJson("/api/verify/start", { method: "POST", body: JSON.stringify(input) });
+        return sendJson(response, v.status || (v.ok ? 200 : 502), v.data);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/verify/check") {
+        const input = await readJson(request);
+        const v = await backendJson("/api/verify/check", { method: "POST", body: JSON.stringify(input) });
+        return sendJson(response, v.status || (v.ok ? 200 : 502), v.data);
+      }
+
       if (request.method === "GET" && url.pathname === "/api/report") {
         const r = await fetch(`${BACKEND_URL}/api/report${url.search || ""}`);
         if (!r.ok) return sendJson(response, 404, { error: "Report not available yet" });

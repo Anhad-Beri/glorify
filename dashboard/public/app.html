@@ -38,6 +38,18 @@
             <p>Only test systems you own or have explicit permission to assess.</p>
           </div>
 
+          <section class="panel verify-panel">
+            <header class="panel-header"><h2>Ownership verification</h2><span class="success-text" id="verify-status-pill"></span></header>
+            <p class="scope-note" style="justify-content:flex-start;gap:0.5rem">Your token — host it once per site you own, reuse forever</p>
+            <div class="terminal" id="verify-token" style="min-height:auto;padding:0.75rem 1rem">loading…</div>
+            <form class="scan-controls" id="verify-form" style="margin-top:0.85rem">
+              <label class="target-field"><span>Site to verify</span><input id="verify-target" type="url" placeholder="https://your-site.example"></label>
+              <button class="outline-button" type="submit" id="verify-btn">Verify ownership</button>
+            </form>
+            <div id="verify-result" class="scope-note" style="grid-column:1/-1"></div>
+            <div id="verified-list" class="scope-note" style="grid-column:1/-1"></div>
+          </section>
+
           <form class="scan-controls" id="scan-form">
             <label class="target-field"><span>Target URL</span><input id="target-url" type="url" value="http://localhost:3000" required></label>
             <fieldset class="mode-field"><legend>Mode</legend><div class="segmented-control is-full"><button type="button" data-mode="fast" aria-pressed="false">Fast / reuse ZAP</button><button class="is-selected" type="button" data-mode="full" aria-pressed="true">Full scan</button></div></fieldset>

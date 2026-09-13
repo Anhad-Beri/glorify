@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steel Pentest Agent</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#131a26; --panel2:#0e1420; --border:#243044;
+    --text:#e6edf6; --muted:#8ea0b8; --accent:#4f8cff;
+    --high:#ef4444; --medium:#f59e0b; --low:#3b82f6; --info:#64748b; --ok:#22c55e; --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px}
+  label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+  input[type=text]{width:100%;padding:11px 12px;background:var(--panel2);border:1px solid var(--border);
+        border-radius:8px;color:var(--text);font-size:14px}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+  .row>div{flex:1;min-width:200px}
+  button{cursor:pointer;font-size:13px;border-radius:8px}
+  .btn{padding:10px 14px;background:var(--panel2);border:1px solid var(--border);color:var(--text)}
+  .btn:hover{border-color:var(--accent)}
+  .modes{display:flex;gap:8px}
+  .modes button{flex:1;padding:9px;background:var(--panel2);border:1px solid var(--border);color:var(--muted)}
+  .modes button.active{border-color:var(--accent);color:var(--text);background:#16213a}
+  .run{margin-top:14px;width:100%;padding:13px;background:var(--accent);border:none;color:#fff;font-size:15px;font-weight:600}
+  .run:disabled{opacity:.4;cursor:not-allowed}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  .verifybox{margin-top:12px;padding:12px;border:1px dashed var(--border);border-radius:8px;background:var(--panel2)}
+  .token{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#05080e;border:1px solid var(--border);
+        border-radius:6px;padding:8px;word-break:break-all;margin:6px 0;color:#c8d4e4}
+  .vstatus{font-size:13px;margin-top:8px}
+  .ok{color:var(--ok)} .bad{color:var(--high)} .warn{color:var(--warn)}
+  .check{display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-size:13px;color:var(--text)}
+  .check input{margin-top:2px}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+  .pill.idle{background:#1f2937;color:var(--muted)} .pill.running{background:#1e293b;color:var(--accent)}
+  .pill.done{background:#15321f;color:var(--ok)} .pill.error{background:#3a1717;color:var(--high)}
+  .telemetry{margin-bottom:12px}
+  .trow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .tlabel{flex:0 0 120px;font-size:12px;color:var(--muted)}
+  .bar{flex:1;height:8px;background:#05080e;border:1px solid var(--border);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
+  .tpct{flex:0 0 42px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
+  .tchips{display:flex;gap:10px;margin-top:2px}
+  .chip{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--muted)}
+  .chip b{color:var(--text);font-variant-numeric:tabular-nums}
+  .log{background:#05080e;border:1px solid var(--border);border-radius:8px;padding:12px;
+        font:12px/1.55 ui-monospace,Menlo,Consolas,monospace;color:#c8d4e4;white-space:pre-wrap;max-height:240px;overflow:auto;min-height:52px}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  td.sev{white-space:nowrap;font-weight:700}
+  .sev-High{color:var(--high)} .sev-Medium{color:var(--medium)} .sev-Low{color:var(--low)}
+  .sev-Informational,.sev-Info{color:var(--info)}
+  .counts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .count{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;min-width:80px}
+  .count b{display:block;font-size:20px} .count span{font-size:11px;color:var(--muted);text-transform:uppercase}
+  .report{display:inline-block;margin-top:12px;padding:10px 16px;background:#16213a;border:1px solid var(--accent);
+        color:var(--text);border-radius:8px;text-decoration:none;font-weight:600}
+  .hide{display:none}
+  code{background:var(--panel2);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Steel Pentest Agent</h1>
+  <p class="sub">Autonomous OWASP scan inside a Steel Computer · verified targets only</p>
+
+  <div class="card" id="tokencard">
+    <label>Your verification token — set up once, reuse for every site you own</label>
+    <div class="token" id="usertoken">loading…</div>
+    <p class="note">Host this exact text at <code>&lt;your-site&gt;/.well-known/steel-pentest-verify.txt</code>
+      then click <b>Verify ownership</b> below. This token <b>never changes</b> — do it once per site and
+      that site stays verified forever. &nbsp;·&nbsp; Verified sites: <span id="verifiedlist">none yet</span>.</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Target URL</label>
+        <input id="target" type="text" value="http://localhost:3000" oninput="onTargetChange()">
+      </div>
+      <div style="flex:0 0 auto">
+        <label>&nbsp;</label>
+        <button class="btn" id="verifyBtn" onclick="startVerify()">Verify ownership</button>
+      </div>
+    </div>
+
+    <div id="verifybox" class="verifybox hide"></div>
+
+    <label class="check"><input type="checkbox" id="affirm" onchange="refreshRun()">
+      <span>I own, or am explicitly authorized to test, this target. I understand scanning
+      systems without authorization is illegal.</span></label>
+
+    <div class="row" style="margin-top:14px">
+      <div style="flex:0 0 auto;min-width:200px">
+        <label>Scan mode</label>
+        <div class="modes">
+          <button id="m-fast" class="active" onclick="setMode('fast')">Fast (reuse ZAP)</button>
+          <button id="m-full" onclick="setMode('full')">Full scan</button>
+        </div>
+      </div>
+      <div style="align-self:flex-end">
+        <label class="check" style="margin:0"><input type="checkbox" id="active">
+          <span>Enable <b>active scan</b> — fires real attack payloads; can disrupt or corrupt a
+          live site. Leave off for passive + spider + crawl. (Always on for the Juice Shop demo.)</span></label>
+      </div>
+    </div>
+
+    <button id="run" class="run" onclick="startScan()" disabled>Run Pentest</button>
+    <p class="note">🔒 A target can only be scanned if it's the exempt OWASP Juice Shop instance
+      or you've proven ownership via a <code>/.well-known</code> token. No verification, no scan.</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <label style="margin:0">Live progress</label>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a id="watchlive" class="hide" href="#" target="_blank"
+           style="font-size:12px;color:var(--accent);text-decoration:none">👁 Watch browser live</a>
+        <span id="phase" class="pill idle" style="text-transform:capitalize"></span>
+        <span id="status" class="pill idle">idle</span>
+      </div>
+    </div>
+    <div id="telemetry" class="telemetry hide">
+      <div class="trow"><span class="tlabel">ZAP spider</span><div class="bar"><i id="bar-spider"></i></div><span id="pct-spider" class="tpct">0%</span></div>
+      <div class="trow"><span class="tlabel">ZAP active scan</span><div class="bar"><i id="bar-ascan"></i></div><span id="pct-ascan" class="tpct">0%</span></div>
+      <div class="tchips"><span class="chip">Requests sent: <b id="t-requests">0</b></span><span class="chip">Alerts found: <b id="t-alerts">0</b></span></div>
+    </div>
+    <div id="liveview" class="hide" style="margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;color:#e05260">🔴 Live browser — Steel is exploring the site</span>
+        <a id="popout" href="#" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none">open full ↗</a>
+      </div>
+      <iframe id="liveframe" title="Steel Browser live view"
+              style="width:100%;height:440px;border:1px solid #2a2a3a;border-radius:10px;background:#000"></iframe>
+    </div>
+    <div id="log" class="log">Ready. Verify a target (or use the Juice Shop default) and run.</div>
+  </div>
+
+  <div id="results" class="card hide">
+    <label>Findings</label>
+    <div id="counts" class="counts"></div>
+    <table><thead><tr><th>Severity</th><th>Category</th><th>Tool</th><th>Endpoint</th></tr></thead>
+      <tbody id="ftable"></tbody></table>
+    <a id="reportBtn" class="report hide" href="/api/report" target="_blank">📄 Open PDF report</a>
+  </div>
+</div>
+
+<script>
+let mode='fast', verifiedOrigin=null, poller=null;
+const SEV={High:0,Medium:1,Low:2,Informational:3,Info:3};
+const $=id=>document.getElementById(id);
+function originOf(u){try{const p=new URL(u);return p.protocol+'//'+p.host;}catch(e){return null;}}
+function isJuice(u){return originOf(u)==='http://localhost:3000';}
+
+function setMode(m){mode=m;$('m-fast').classList.toggle('active',m==='fast');$('m-full').classList.toggle('active',m==='full');}
+
+function onTargetChange(){
+  const t=$('target').value.trim();
+  // any target change invalidates a prior verification unless it matches
+  if(originOf(t)!==verifiedOrigin) verifiedOrigin=null;
+  $('verifybox').classList.add('hide');
+  refreshRun();
+}
+
+async function startVerify(){
+  const t=$('target').value.trim(); const box=$('verifybox'); box.classList.remove('hide');
+  if(isJuice(t)){ box.innerHTML='<span class="vstatus ok">✓ OWASP Juice Shop — exempt practice target, no verification needed.</span>';
+    verifiedOrigin=originOf(t); refreshRun(); return; }
+  box.innerHTML='Requesting token…';
+  const r=await fetch('/api/verify/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:t})});
+  const j=await r.json();
+  if(!r.ok){ box.innerHTML='<span class="vstatus bad">⛔ '+(j.error||'error')+'</span>'; return; }
+  if(j.exempt){ box.innerHTML='<span class="vstatus ok">✓ '+j.message+'</span>'; verifiedOrigin=originOf(t); refreshRun(); return; }
+  box.innerHTML =
+    '<div>1. Host this exact token at:</div>'+
+    '<div class="token">'+esc(j.url)+'</div>'+
+    '<div>2. File contents:</div><div class="token">'+esc(j.token)+'</div>'+
+    '<button class="btn" onclick="checkVerify()">I\'ve added it — Check</button>'+
+    '<div id="vstat" class="vstatus"></div>';
+}
+
+async function checkVerify(){
+  const t=$('target').value.trim(); const vs=$('vstat'); vs.textContent='Checking…';
+  const r=await fetch('/api/verify/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:t})});
+  const j=await r.json();
+  if(j.verified){ vs.className='vstatus ok'; vs.textContent='✓ '+j.detail; verifiedOrigin=originOf(t); }
+  else{ vs.className='vstatus bad'; vs.textContent='✗ '+(j.detail||j.error); verifiedOrigin=null; }
+  refreshRun();
+}
+
+function refreshRun(){
+  const t=$('target').value.trim();
+  const authorized = isJuice(t) || (verifiedOrigin && verifiedOrigin===originOf(t));
+  $('run').disabled = !(authorized && $('affirm').checked);
+}
+
+async function startScan(){
+  const t=$('target').value.trim();
+  $('results').classList.add('hide'); $('reportBtn').classList.add('hide');
+  $('run').disabled=true; $('telemetry').classList.remove('hide');
+  setStatus('running'); setLog('Starting scan on the Steel Computer…');
+  const body={target:t,mode,active:$('active').checked,affirm:$('affirm').checked};
+  try{
+    const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(!r.ok){ setStatus('error'); setLog('⛔ '+(j.error||'refused')); refreshRun(); return; }
+    poller=setInterval(poll,1500);
+  }catch(e){ setStatus('error'); setLog('Error: '+e); refreshRun(); }
+}
+
+async function poll(){
+  const j=await (await fetch('/api/status')).json();
+  if(j.log) setLog(j.log);
+  if(j.progress) renderProgress(j.progress);
+  // Live browser feed: show the embedded Steel viewer while the crawl is actually
+  // running (the session is released once crawling ends, so hide it afterwards).
+  const wl=$('watchlive'), lv=$('liveview'), lf=$('liveframe'), po=$('popout');
+  const crawling = j.viewer_url && j.phase==='crawling' && j.status==='running';
+  if(crawling){
+    wl.href=j.viewer_url; wl.classList.remove('hide');
+    po.href=j.viewer_url;
+    if(lf.getAttribute('src')!==j.viewer_url) lf.setAttribute('src',j.viewer_url);
+    lv.classList.remove('hide');
+  }else{
+    wl.classList.add('hide'); lv.classList.add('hide');
+    if(lf.getAttribute('src')) lf.setAttribute('src','about:blank');
+  }
+  const ph=$('phase'); if(j.phase && j.status==='running'){ph.textContent=j.phase; ph.className='pill running';} else {ph.textContent='';}
+  setStatus(j.status);
+  if(j.status==='done'||j.status==='error'){
+    clearInterval(poller); refreshRun();
+    if(j.status==='error'&&j.error) setLog((j.log?j.log+'\n':'')+'⛔ '+j.error);
+    if(j.status==='done') renderFindings(j.findings,j.report_ready);
+  }
+}
+
+function renderProgress(p){
+  const set=(b,pc,v)=>{v=(v==null?0:v);$(b).style.width=v+'%';$(pc).textContent=v+'%';};
+  set('bar-spider','pct-spider',p.spider); set('bar-ascan','pct-ascan',p.ascan);
+  $('t-requests').textContent=(p.requests==null?0:p.requests).toLocaleString();
+  $('t-alerts').textContent=(p.alerts==null?0:p.alerts).toLocaleString();
+}
+function renderFindings(f,ready){
+  $('results').classList.remove('hide');
+  const c={}; f.forEach(x=>c[x.severity]=(c[x.severity]||0)+1);
+  const ord=Object.keys(c).sort((a,b)=>(SEV[a]??9)-(SEV[b]??9));
+  $('counts').innerHTML='<div class="count"><b>'+f.length+'</b><span>Total</span></div>'+
+    ord.map(s=>'<div class="count"><b class="sev-'+s+'">'+c[s]+'</b><span>'+s+'</span></div>').join('');
+  const s=[...f].sort((a,b)=>(SEV[a.severity]??9)-(SEV[b.severity]??9));
+  $('ftable').innerHTML=s.map(x=>'<tr><td class="sev sev-'+x.severity+'">'+x.severity+'</td><td>'+esc(x.category)+
+    '</td><td>'+esc(x.tool||'')+'</td><td style="font-family:ui-monospace,monospace;font-size:12px;color:#9fb0c8">'+esc(x.endpoint||'')+'</td></tr>').join('');
+  $('reportBtn').classList.toggle('hide',!ready);
+}
+function setStatus(s){const e=$('status');e.className='pill '+s;e.textContent=s;}
+function setLog(t){const e=$('log');e.textContent=t;e.scrollTop=e.scrollHeight;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+async function loadToken(){
+  try{const j=await (await fetch('/api/token')).json();
+    $('usertoken').textContent=j.token;
+    $('verifiedlist').textContent=(j.verified&&j.verified.length)?j.verified.join(', '):'none yet';
+  }catch(e){$('usertoken').textContent='(could not load)';}
+}
+loadToken();
+onTargetChange();
+</script>
+</body>
+</html>

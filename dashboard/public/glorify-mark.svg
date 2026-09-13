@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Glorify Open Core mark</title>
+  <defs>
+    <linearGradient id="mark-gradient" x1="18" y1="18" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00e6b0"/>
+      <stop offset="1" stop-color="#00bd91"/>
+    </linearGradient>
+  </defs>
+  <path d="M103 25H41c-10 0-18 8-18 18v47c0 10 8 18 18 18h49c10 0 18-8 18-18V59H61v27h22V73" fill="none" stroke="url(#mark-gradient)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="54" y="58" width="17" height="17" rx="2.5" fill="url(#mark-gradient)"/>
+</svg>

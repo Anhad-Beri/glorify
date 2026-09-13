@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sign in to the Glorify autonomous security assessment workspace.">
+  <title>Sign in · Glorify Security Ops</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css?v=logo-11-1">
+  <script src="/assets/signin.js?v=signin-bloom-3" defer></script>
+</head>
+<body class="auth-body">
+  <main class="auth-shell">
+    <canvas class="auth-background" aria-hidden="true"></canvas>
+    <section class="auth-context" aria-label="Product introduction">
+      <a class="brand brand-large" href="/signin" aria-label="Glorify Security Ops home">
+        <img class="brand-logo brand-logo-signin" src="/assets/glorify-logo-dark.svg" alt="Glorify">
+        <span class="brand-context">/ SECURITY OPS</span>
+      </a>
+      <div class="auth-context-copy">
+        <p class="eyebrow">Autonomous application security</p>
+        <h1>One secure workspace for every assessment.</h1>
+        <p>Launch an authorized pentest, watch the agent's computer live, and review independently verified evidence.</p>
+      </div>
+      <div class="auth-signal" aria-label="Service status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Local security workspace ready
+      </div>
+    </section>
+
+    <section class="auth-card" aria-labelledby="signin-title">
+      <div>
+        <p class="eyebrow">Protected workspace</p>
+        <h2 id="signin-title">Sign in to continue</h2>
+        <p class="auth-subtitle">Use the temporary demo account while team authentication is being connected.</p>
+      </div>
+      <form class="auth-form" id="signin-form">
+        <label>
+          <span>Email</span>
+          <input id="email" name="email" type="email" value="demo@glorify.local" autocomplete="username" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input id="password" name="password" type="password" value="glorify-demo" autocomplete="current-password" required>
+        </label>
+        <p class="form-error" id="signin-error" role="alert" hidden></p>
+        <button class="primary-button auth-submit" type="submit">
+          <span>Sign in</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </form>
+      <div class="demo-credentials">
+        <span>Demo access</span>
+        <code>demo@glorify.local</code>
+        <code>glorify-demo</code>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Glorify autonomous security assessment workspace.">
+  <title>Security workspace · Glorify</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css?v=background-fixed-1">
+  <script src="/assets/app.js?v=ambient-13" defer></script>
+</head>
+<body class="app-body">
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="/app" aria-label="Glorify Security Ops home">
+        <img class="brand-logo brand-logo-header" src="/assets/glorify-logo-dark.svg" alt="Glorify">
+        <span class="brand-context">/ SECURITY OPS</span>
+      </a>
+      <div class="header-actions">
+        <span class="computer-status"><span class="status-dot" aria-hidden="true"></span>Steel Computer online</span>
+        <span class="account-email" id="account-email">Loading…</span>
+        <button class="ghost-button" id="signout-button" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <nav class="side-nav" aria-label="Workspace">
+        <button class="nav-button is-active" type="button" data-view="scan" aria-pressed="true" aria-label="New pentest"><span aria-hidden="true">◎</span><span class="nav-label">New scan</span></button>
+        <button class="nav-button" type="button" data-view="reports" aria-pressed="false" aria-label="Assessments and reports"><span aria-hidden="true">▤</span><span class="nav-label">Reports</span></button>
+        <button class="nav-button" type="button" data-view="settings" aria-pressed="false" aria-label="Settings"><span aria-hidden="true">⚙</span><span class="nav-label">Settings</span></button>
+      </nav>
+
+      <main class="workspace">
+        <section class="view is-visible" id="view-scan" data-panel="scan">
+          <canvas class="ambient-background" data-animation="lattice" aria-hidden="true"></canvas>
+          <div class="page-heading">
+            <div><p class="eyebrow">Assessment console</p><h1>Authorize target. Launch probe. Verify evidence.</h1></div>
+            <p>Only test systems you own or have explicit permission to assess.</p>
+          </div>
+
+          <form class="scan-controls" id="scan-form">
+            <label class="target-field"><span>Target URL</span><input id="target-url" type="url" value="http://localhost:3000" required></label>
+            <fieldset class="mode-field"><legend>Mode</legend><div class="segmented-control is-full"><button type="button" data-mode="fast" aria-pressed="false">Fast / reuse ZAP</button><button class="is-selected" type="button" data-mode="full" aria-pressed="true">Full scan</button></div></fieldset>
+            <button class="primary-button run-button" type="submit"><span aria-hidden="true">▶</span>Run pentest</button>
+            <div class="scope-note"><span>Locked scope</span><span id="mode-description">Full scan · fresh spider and active scan</span></div>
+          </form>
+
+          <div class="dashboard-grid">
+            <section class="panel trace-panel"><header class="panel-header"><h2>Live agent trace</h2><span class="success-text" id="trace-status">Complete</span></header><div class="terminal" id="agent-trace" aria-live="polite"><span>[00:04] route map complete / 14 surfaces</span><span>[00:11] source inspection / input boundary located</span><span>[00:23] ZAP active scan / 9 candidate signals</span><span class="warning-text">[00:31] browser probe / reflected execution observed</span><span class="success-text">[00:32] evidence independently verified</span></div></section>
+            <section class="panel progress-panel"><header class="panel-header"><h2>Assessment progress</h2><span class="success-text" id="progress-time">Complete · 00:43</span></header><ol class="progress-list" id="progress-list"><li class="is-complete"><span class="check">✓</span><span>Application reconnaissance</span><time>12s</time></li><li class="is-complete"><span class="check">✓</span><span>Source and policy review</span><time>18s</time></li><li class="is-complete"><span class="check">✓</span><span>Browser verification</span><time>9s</time></li><li class="is-complete"><span class="check">✓</span><span>Report assembly</span><time>4s</time></li></ol></section>
+          </div>
+
+          <section class="panel findings-panel">
+            <header class="findings-header"><div><p class="eyebrow">Latest completed run</p><h2>Findings report</h2></div><button class="outline-button report-trigger" type="button" data-run="RUN-024" data-target="http://localhost:3000" data-mode-label="Full scan">Open PDF report</button></header>
+            <div class="metric-row"><div><strong>10</strong><span>Total</span></div><div class="metric-high"><strong>2</strong><span>High</span></div><div class="metric-medium"><strong>4</strong><span>Medium</span></div><div class="metric-low"><strong>1</strong><span>Low</span></div><div><strong>3</strong><span>Info</span></div></div>
+            <div class="table-scroll"><table><thead><tr><th>Severity</th><th>Category</th><th>Evidence</th><th>Endpoint</th></tr></thead><tbody><tr><td class="severity-high">High</td><td>Reflected cross-site scripting</td><td>Browser marker</td><td><code>/?q=...</code></td></tr><tr><td class="severity-high">High</td><td>Broken access control</td><td>Authenticated probe</td><td><code>/api/admin/report</code></td></tr><tr><td class="severity-medium">Medium</td><td>Missing content security policy</td><td>ZAP</td><td><code>/</code></td></tr></tbody></table></div>
+          </section>
+        </section>
+
+        <section class="view" id="view-reports" data-panel="reports" hidden>
+          <canvas class="ambient-background" data-animation="orbital" aria-hidden="true"></canvas>
+          <div class="page-heading"><div><p class="eyebrow">Reports</p><h1>Assessment library</h1></div><p>Review every run, its result, and the evidence report it produced.</p></div>
+          <div class="overview-row"><div class="overview-card"><strong id="ov-total">0</strong><span>Total runs</span></div><div class="overview-card"><strong id="ov-completed">0</strong><span>Completed</span></div><div class="overview-card"><strong id="ov-findings">0</strong><span>Verified findings</span></div></div>
+          <div class="report-library" id="report-library"><p>Loading assessments…</p></div>
+        </section>
+
+        <section class="view" id="view-settings" data-panel="settings" hidden>
+          <canvas class="ambient-background" data-animation="gyroscope" aria-hidden="true"></canvas>
+          <div class="page-heading"><div><p class="eyebrow">Settings</p><h1>Agent configuration</h1></div><p>Configure default scan behavior and evidence collection.</p></div>
+          <form id="settings-form">
+            <div class="settings-grid">
+              <section class="panel settings-card settings-wide"><h2>Scan defaults</h2><label class="setting-row"><span>Default mode<small>Preselected when you open the New scan view</small></span><select name="defaultMode"><option value="full">Full scan</option><option value="fast">Fast / reuse ZAP</option></select></label><div class="settings-actions"><span id="settings-status" role="status"></span><button class="primary-button" type="submit">Save settings</button></div></section>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="computer-modal" role="dialog" aria-modal="true" aria-labelledby="computer-modal-title" hidden>
+    <section class="modal computer-modal">
+      <header class="modal-header"><h2 id="computer-modal-title">Agent computer <span>Live</span></h2><button class="icon-button modal-close" type="button" aria-label="Close live computer">×</button></header>
+      <div class="computer-screen"><div class="computer-terminal" id="computer-terminal" aria-live="polite"><strong>STEEL COMPUTER / TERMINAL</strong></div></div>
+      <footer class="modal-footer"><span>Live terminal stream</span><span class="success-text">Session active</span></footer>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="run-modal" role="dialog" aria-modal="true" aria-labelledby="run-modal-title" hidden>
+    <section class="modal run-modal">
+      <header class="modal-header"><h2 id="run-modal-title">Run detail <span id="run-detail-id">RUN-024</span></h2><button class="icon-button modal-close" type="button" aria-label="Close run detail">×</button></header>
+      <div class="run-detail-content"><div class="run-detail-meta"><div><span>Target</span><strong id="run-detail-target">localhost:3000</strong></div><div><span>Status</span><strong id="run-detail-status">Complete</strong></div><div><span>Mode</span><strong id="run-detail-mode">Full scan</strong></div><div><span>Duration</span><strong id="run-detail-duration">00:43</strong></div></div><div class="run-detail-grid"><section><p class="eyebrow">Execution phases</p><ol class="run-phase-list" id="run-detail-phases"></ol></section><section><p class="eyebrow">Operational log</p><div class="run-log" id="run-detail-log"></div></section></div></div>
+      <footer class="modal-footer"><span id="run-detail-when">Today, 18:42</span><span class="success-text" id="run-detail-session">Steel session steel-8f21</span></footer>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

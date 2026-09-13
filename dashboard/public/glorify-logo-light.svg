@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 128" role="img" aria-labelledby="title">
+  <title id="title">Glorify</title>
+  <path d="M103 25H41c-10 0-18 8-18 18v47c0 10 8 18 18 18h49c10 0 18-8 18-18V59H61v27h22V73" fill="none" stroke="#091019" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="54" y="58" width="17" height="17" rx="2.5" fill="#091019"/>
+  <text x="142" y="91" fill="#091019" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="700" letter-spacing="-3">Glorify</text>
+</svg>

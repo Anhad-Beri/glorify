@@ -1,0 +1,5 @@
+steel-sdk
+playwright
+requests
+python-dotenv
+reportlab

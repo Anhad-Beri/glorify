@@ -1,0 +1,29 @@
+# ── Secrets & per-install state (NEVER commit) ───────────────────────────────
+.env
+.user_token
+.verified.json
+deploy/.tunnel_url
+
+# ── Runtime / generated output ───────────────────────────────────────────────
+*.log
+webapp/history.json
+webapp/reports/
+webapp/crawl_out/
+reports/
+crawl_out/
+run.log
+run.done
+# generated reports (regenerated every scan)
+*.pdf
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ── Node ─────────────────────────────────────────────────────────────────────
+node_modules/
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
